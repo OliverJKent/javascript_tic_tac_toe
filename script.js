@@ -1,6 +1,6 @@
 window.onload = function(){
 
-  var playerTurn = document.getElementsByClassName("playerTurn")[0];
+  var playerTurn = document.getElementById("playerTurn");
   var turn = 1; //1=X, 0=O
   var turnChar = ["O","X"];
   var turnText = ["It is O's turn","It is X's turn"];
