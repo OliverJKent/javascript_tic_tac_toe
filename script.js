@@ -1,234 +1,80 @@
-function winDetector() {
-  if (JSON.stringify(winArrayX) == JSON.stringify([1, 1, 1, 0, 0, 0, 0, 0, 0])){
-    alert("X wins!");
-  } else if (JSON.stringify(winArrayX) == JSON.stringify([0, 0, 0, 1, 1, 1, 0, 0, 0]))  {
-    alert("X wins!");
-  } else if (JSON.stringify(winArrayX) == JSON.stringify([0, 0, 0, 0, 0, 0, 1, 1, 1]))  {
-    alert("X wins!");
-  } else if (JSON.stringify(winArrayX) == JSON.stringify([1, 0, 0, 1, 0, 1, 0, 0, 0]))  {
-    alert("X wins!");
-  } else if (JSON.stringify(winArrayX) == JSON.stringify([0, 1, 0, 0, 1, 0, 0, 1, 0]))  {
-    alert("X wins!");
-  } else if (JSON.stringify(winArrayX) == JSON.stringify([0, 0, 1, 0, 0, 1, 0, 0, 1]))  {
-    alert("X wins!");
-  } else if (JSON.stringify(winArrayX) == JSON.stringify([1, 0, 0, 0, 1, 0, 0, 0, 1]))  {
-    alert("X wins!");
-  } else if (JSON.stringify(winArrayX) == JSON.stringify([0, 0, 1, 0, 1, 0, 1, 0, 0]))  {
-    alert("X wins!");
-  } else if (JSON.stringify(winArrayX) == JSON.stringify([1, 0, 0, 1, 0, 0, 1, 0, 0]))  {
-    alert("X wins!");
+window.onload = function(){
+
+  var playerTurn = document.getElementsByClassName("playerTurn")[0];
+  var turn = 1; //1=X, 0=O
+  var turnChar = ["O","X"];
+  var turnText = ["It is O's turn","It is X's turn"];
+  var winText1 = "The winner is ";
+  var winText2 = "!!!";
+  var drawText = "It's a draw!";
+
+  var pickedList = [[],[]];
+  var boxes = document.getElementsByTagName("td");
+  var reset = document.getElementById("reset");
+
+  for(var box of boxes){
+    box.className = "available";
+
+    box.addEventListener("click",function(){
+      if(this.classList.contains("available")){
+        this.className = "";
+        this.innerHTML = turnChar[turn];
+        pickedList[turn].push(this.dataset.num);
+        if(hasWon()){
+          playerTurn.innerHTML = winText1 + turnChar[turn] + winText2;
+          for(var box of boxes){
+            box.className = "";
+          }
+        }
+        else if(pickedList[0].length+pickedList[1].length == 9){
+          playerTurn.innerHTML = drawText;
+        }
+        else{
+          turn = (turn+1)%2;
+          playerTurn.innerHTML = turnText[turn];
+          console.log(pickedList);
+        }
+      }
+    });
   }
 
-  if (JSON.stringify(winArrayO) == JSON.stringify([1, 1, 1, 0, 0, 0, 0, 0, 0])){
-    alert("O wins!");
-  } else if (JSON.stringify(winArrayO) == JSON.stringify([0, 0, 0, 1, 1, 1, 0, 0, 0]))  {
-    alert("O wins!");
-  } else if (JSON.stringify(winArrayO) == JSON.stringify([0, 0, 0, 0, 0, 0, 1, 1, 1]))  {
-    alert("O wins!");
-  } else if (JSON.stringify(winArrayO) == JSON.stringify([1, 0, 0, 1, 0, 1, 0, 0, 0]))  {
-    alert("O wins!");
-  } else if (JSON.stringify(winArrayO) == JSON.stringify([0, 1, 0, 0, 1, 0, 0, 1, 0]))  {
-    alert("O wins!");
-  } else if (JSON.stringify(winArrayO) == JSON.stringify([0, 0, 1, 0, 0, 1, 0, 0, 1]))  {
-    alert("O wins!");
-  } else if (JSON.stringify(winArrayO) == JSON.stringify([1, 0, 0, 0, 1, 0, 0, 0, 1]))  {
-    alert("O wins!");
-  } else if (JSON.stringify(winArrayO) == JSON.stringify([0, 0, 1, 0, 1, 0, 1, 0, 0]))  {
-    alert("O wins!");
-  } else if (JSON.stringify(winArrayO) == JSON.stringify([1, 0, 0, 1, 0, 0, 1, 0, 0]))  {
-    alert("O wins!");
+  reset.addEventListener("click",function(){
+    turn = 1;
+    playerTurn.innerHTML = turnText[1];
+    pickedList = [[],[]];
+    for(var box of boxes){
+      box.innerHTML = "";
+      box.className = "available";
+    }
+  });
+
+  var winPoss =  [[0,1,2],
+                  [3,4,5],
+                  [6,7,8],
+                  [0,3,6],
+                  [1,4,7],
+                  [2,5,8],
+                  [0,4,8],
+                  [2,4,6]];
+
+  function hasWon(){
+    var hasWon = false;
+    for(let poss of winPoss){
+      let found = 0;
+      for(let playerChoice of pickedList[turn]){
+        for(let possChoice of poss){
+          console.log(possChoice + " " + playerChoice);
+          if(playerChoice==possChoice){
+            found += 1;
+            break;
+          }
+        }
+      }
+      if(found>=3){
+        return true;
+      }
+    }
+    return false;
   }
 
-
-}
-
-var turn = 0;
-
-var winArrayX = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-var winArrayO = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-
-
-var tableNum = document.getElementsByTagName('td')[0];
-tableNum.addEventListener('click', function() {
-  console.log("numZero was clicked");
-  if (turn == 0) {
-    tableNum.innerHTML = "X";
-    winArrayX[0] = 1;
-    turn++;
-    document.getElementById("playerTurn").innerHTML = "It is O's turn";
-    winDetector();
-  }else if (turn == 1) {
-    console.log(turn);
-    tableNum.innerHTML = "O";
-    winArrayO[0] = 1;
-    turn--;
-    document.getElementById("playerTurn").innerHTML = "It is X's turn";
-    winDetector();
-  }
-}, {once: true});
-
-var tableNum1 = document.getElementsByTagName('td')[1];
-tableNum1.addEventListener('click', function() {
-  console.log("numOne was clicked");
-  console.log(turn);
-  if (turn == 0) {
-    tableNum1.innerHTML = "X";
-    winArrayX[1] = 1;
-    turn++;
-    document.getElementById("playerTurn").innerHTML = "It is O's turn";
-    winDetector();
-  }else if (turn == 1) {
-    tableNum1.innerHTML = "O";
-    winArrayO[1] = 1;
-    turn--;
-    document.getElementById("playerTurn").innerHTML = "It is X's turn";
-    winDetector();
-  }
-}, {once: true});
-
-var tableNum2 = document.getElementsByTagName('td')[2];
-tableNum2.addEventListener('click', function() {
-  console.log("numTwo was clicked");
-  console.log(turn);
-  if (turn == 0) {
-    tableNum2.innerHTML = "X";
-    winArrayX[2] = 1;
-    turn++;
-    document.getElementById("playerTurn").innerHTML = "It is O's turn";
-    winDetector();
-  }else if (turn == 1) {
-    tableNum2.innerHTML = "O";
-    winArrayO[2] = 1;
-    turn--;
-    document.getElementById("playerTurn").innerHTML = "It is X's turn";
-    winDetector();
-  }
-}, {once: true});
-
-
-
-var tableNum3 = document.getElementsByTagName('td')[3];
-tableNum3.addEventListener('click', function() {
-  console.log("numThree was clicked");
-  console.log(turn);
-  if (turn == 0) {
-    tableNum3.innerHTML = "X";
-    winArrayX[3] = 1;
-    turn++;
-    document.getElementById("playerTurn").innerHTML = "It is O's turn";
-    winDetector();
-  }else if (turn == 1) {
-    tableNum3.innerHTML = "O";
-    winArrayO[3] = 1;
-    turn--;
-    document.getElementById("playerTurn").innerHTML = "It is X's turn";
-    winDetector();
-  }
-}, {once: true});
-
-var tableNum4 = document.getElementsByTagName('td')[4];
-tableNum4.addEventListener('click', function() {
-  console.log("numFour was clicked");
-  console.log(turn);
-  if (turn == 0) {
-    tableNum4.innerHTML = "X";
-    winArrayX[4] = 1;
-    turn++;
-    document.getElementById("playerTurn").innerHTML = "It is O's turn";
-    winDetector();
-  }else if (turn == 1) {
-    tableNum4.innerHTML = "O";
-    winArrayO[4] = 1;
-    turn--;
-    document.getElementById("playerTurn").innerHTML = "It is X's turn";
-    winDetector();
-  }
-}, {once: true});
-
-var tableNum5 = document.getElementsByTagName('td')[5];
-tableNum5.addEventListener('click', function() {
-  console.log("numFive was clicked");
-  if (turn == 0) {
-    tableNum5.innerHTML = "X";
-    winArrayX[5] = 1;
-    turn++;
-    document.getElementById("playerTurn").innerHTML = "It is O's turn";
-    winDetector();
-  }else if (turn == 1) {
-    tableNum5.innerHTML = "O";
-    winArrayO[5] = 1;
-    turn--;
-    document.getElementById("playerTurn").innerHTML = "It is X's turn";
-    winDetector();
-  }
-}, {once: true});
-
-var tableNum6 = document.getElementsByTagName('td')[6];
-tableNum6.addEventListener('click', function() {
-  console.log("numTwo was clicked");
-  console.log(turn);
-  if (turn == 0) {
-    tableNum6.innerHTML = "X";
-    winArrayX[6] = 1;
-    turn++;
-    document.getElementById("playerTurn").innerHTML = "It is O's turn";
-    winDetector();
-  }else if (turn == 1) {
-    tableNum6.innerHTML = "O";
-    winArrayO[6] = 1;
-    turn--;
-    document.getElementById("playerTurn").innerHTML = "It is X's turn";
-    winDetector();
-  }
-}, {once: true});
-
-var tableNum7 = document.getElementsByTagName('td')[7];
-tableNum7.addEventListener('click', function() {
-  console.log("numTwo was clicked");
-  console.log(turn);
-  if (turn == 0) {
-    tableNum7.innerHTML = "X";
-    winArrayX[7] = 1;
-    turn++;
-    document.getElementById("playerTurn").innerHTML = "It is O's turn";
-    winDetector();
-  }else if (turn == 1) {
-    tableNum7.innerHTML = "O";
-    winArrayO[7] = 1;
-    turn--;
-    document.getElementById("playerTurn").innerHTML = "It is X's turn";
-    winDetector();
-  }
-}, {once: true});
-
-var tableNum8 = document.getElementsByTagName('td')[8];
-tableNum8.addEventListener('click', function() {
-  console.log("numTwo was clicked");
-  console.log(turn);
-  if (turn == 0) {
-    tableNum8.innerHTML = "X";
-    winArrayX[8] = 1;
-    turn++;
-    document.getElementById("playerTurn").innerHTML = "It is O's turn";
-    winDetector();
-  }else if (turn == 1) {
-    tableNum8.innerHTML = "O";
-    winArrayO[8] = 1;
-    turn--;
-    document.getElementById("playerTurn").innerHTML = "It is X's turn";
-    winDetector();
-  }
-}, {once: true});
-
-var resetButton = document.getElementById("reset");
-resetButton.addEventListener('click', function() {
-tableNum8.innerHTML = "";
-tableNum7.innerHTML = "";
-tableNum6.innerHTML = "";
-tableNum5.innerHTML = "";
-tableNum4.innerHTML = "";
-tableNum3.innerHTML = "";
-tableNum2.innerHTML = "";
-tableNum1.innerHTML = "";
-tableNum.innerHTML = "";
-});
+};
