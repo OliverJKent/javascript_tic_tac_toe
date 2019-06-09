@@ -1,2 +1,2 @@
 # tic_tac_toe
-A Javascript implementation of Tic Tac Toe.
+The game is structured using an HTML template, styled with CSS and made dynamic by using JavaScript for DOM manipulation.
